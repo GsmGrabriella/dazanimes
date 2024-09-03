@@ -9,7 +9,9 @@ const app = express()
 
 
 // configuração do servidor
-app.use(cors()); // permite que o front-end acesse o back-end
+app.use(cors({
+  origin: "*"
+})); // permite que o front-end acesse o back-end
 app.use(express.json()); // permite que o servidor entenda requisições no formato JSON
 app.use(routes); // utiliza as rotas criadas
 
