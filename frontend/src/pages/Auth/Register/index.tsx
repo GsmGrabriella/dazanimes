@@ -1,22 +1,28 @@
-import React from 'react';
-import logo from '../../../assets/logo.png';
-import auth_girl_1 from '../../../assets/auth/auth_girl_1.png';
+// importa as dependências necessárias
+import React from 'react'; // importa o React
+import { useNavigate } from "react-router-dom"; // importa o hook useNavigate
+import { useState } from 'react' // importa o hook useState
+import api from '../../../util/api'; // importa a instância do axios
+
+import logo from '../../../assets/logo.png'; // importa a logo
+import auth_girl_1 from '../../../assets/auth/auth_girl_1.png'; 
 import auth_girl_2 from '../../../assets/auth/auth_girl_2.png';
-import { useNavigate } from "react-router-dom";
-import api from '../../../util/api';
-import { useState } from 'react'
 
-import '../auth.css'
-import './styles.css';
+import '../auth.css' // importa o arquivo de estilos
+import './styles.css'; // importa o arquivo de estilos
 
+// define o componente Register
 const Register: React.FC = () => {
+  // define a variável navigate que recebe o hook useNavigate
   const navigate = useNavigate();
 
+  // define as variáveis de estado username, email, password e passwordConfirmation
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordConfirmation, setPasswordConfirmation] = useState('');
 
+  // define a função que será executada ao submeter o formulário ( criar usuário )
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
     const res = await api.post('/users/create', {username, email, password, passwordConfirmation});
@@ -27,6 +33,8 @@ const Register: React.FC = () => {
 
   }
 
+
+  // retorna o JSX do componente
   return <div className="container">
     <header>
       <img className="logo" src={logo} alt="logo"/>
