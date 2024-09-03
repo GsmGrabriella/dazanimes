@@ -1,21 +1,19 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// Arquivo de models
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
+  provider = "sqlite" // tipo de banco de dados
+  url      = env("DATABASE_URL") // url do banco de dados
 }
 
 model User {
-  id              String   @id @default(uuid())
-  username        String
-  password_hash   String
-  email           String   @unique
-  profile_picture String   @default("https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png")
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  id              String   @id @default(uuid()) // id do usuário ( uuid )
+  username        String // nome de usuário
+  password_hash   String // senha criptografada
+  email           String   @unique // email do usuário
+  profile_picture String   @default("https://www.pngitem.com/pimgs/m/146-1468479_my-profile-icon-blank-profile-picture-circle-hd.png") // imagem de perfil
+  created_at      DateTime @default(now()) // data de criação
+  updated_at      DateTime @updatedAt // data de atualização
 }
