@@ -38,7 +38,7 @@ async function login(req: Request, res: Response): Promise<Response> {
   const token = sign({ user: JSON.stringify(user) }, process.env.JWT_SECRET, { expiresIn: '15d' })
 
   // retorna o token
-  return res.json({ token })
+  return res.json({ user, token })
 
 }
 
