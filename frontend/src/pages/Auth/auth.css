@@ -40,12 +40,19 @@ footer {
 
 .auth_girl_1 {
   object-fit: contain;
-  width: 230px;
+  max-width: 230px;
+  height: 160px;
+  transform: scaleX(-1);
+  float: right;
+  background-image: none;
+  margin-left: 85.5%;
 }
 
 .auth_girl_2 {
   object-fit: contain;
   width: 150px;
+  height: 150px;
+  float: left;
 }
 
 @media (min-width: 768px) {
