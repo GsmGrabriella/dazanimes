@@ -14,16 +14,10 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Setup SSH
-      run: |
-        mkdir -p ~/.ssh  # Cria o diretório ~/.ssh se não existir
-        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa  # Adiciona a chave privada
-        chmod 600 ~/.ssh/id_rsa  # Define as permissões corretas
-        ssh-keyscan 64.181.182.85 >> ~/.ssh/known_hosts  # Adiciona o servidor ao arquivo de hosts conhecidos
+      uses: webfactory/ssh-agent@v0.5.3
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
     - name: Deploy to server
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@64.181.182.85 'cd ~/dazanimes/backend/ && git pull origin main && yarn install && cd ~/dazanimes/frontend/ && git pull origin main && yarn install && cd ~/dazanimes/ && pm2 restart all'
-      env:
-        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
-
-
