@@ -13,8 +13,15 @@ jobs:
     - name: Check out repository
       uses: actions/checkout@v2
 
+    - name: Setup SSH
+      run: |
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan 64.181.182.85 >> ~/.ssh/known_hosts
+
     - name: Deploy to server
       run: |
         ssh -o StrictHostKeyChecking=no ubuntu@64.181.182.85 'cd ~/dazanimes/backend/ && git pull origin main && yarn install && cd ~/dazanimes/frontend/ && git pull origin main && yarn install && cd ~/dazanimes/ && pm2 restart all'
       env:
         SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+
