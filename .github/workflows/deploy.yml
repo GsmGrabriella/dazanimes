@@ -1,0 +1,7 @@
+name: Deploy on Push on: push: branches: - main jobs: deploy: runs-on: ubuntu-latest steps: - name: Check out 
+    repository
+      uses: actions/checkout@v2 - name: Deploy to server run: | ssh ubuntu@64.181.182.85 'cd 
+        ~/dazanimes/backend/ && git pull origin main && yarn install && cd ~/dazanimes/frontend/ && git pull 
+        origin main && yarn install && cd ~/dazanimes/ && pm2 restart all'
+      env:
+        SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
