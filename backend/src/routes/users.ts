@@ -1,6 +1,7 @@
 // importação de dependências
 import { Router } from 'express'; // dependência para cadastrar as rotas
-import { createUser } from '../controllers/UserController'; // importação da função createUser do controlador de usuários
+import { createUser, updateUser } from '../controllers/UserController'; // importação da função createUser do controlador de usuários
+import AuthMiddleware from '../middlewares/AuthMiddleware';
 
 // criação das rotas de usuários
 export function userRoutes() {
@@ -12,6 +13,8 @@ export function userRoutes() {
   });
 
   router.post('/create', createUser); // rota para criar um usuário
+
+  router.put('/update/:id', AuthMiddleware, updateUser);
 
   return router; // retorna as rotas
 }
