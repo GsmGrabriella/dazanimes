@@ -20,5 +20,5 @@ jobs:
 
     - name: Deploy to server
       run: |
-        ssh -o StrictHostKeyChecking=no ubuntu@64.181.182.85 'source ~/.nvm/nvm.sh && nvm use 20 && cd ~/dazanimes/backend/ && npm install && cd ~/dazanimes/frontend/ && npm install && cd ~/dazanimes/ && pm2 restart all'
+        ssh -o StrictHostKeyChecking=no ubuntu@64.181.182.85 'source ~/.nvm/nvm.sh && nvm use 20 && cd ~/dazanimes/backend/ && git pull && npm install && cd ~/dazanimes/frontend/ && git pull && npm install && cd ~/dazanimes/ && pm2 restart all'
 
