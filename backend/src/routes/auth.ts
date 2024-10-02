@@ -14,3 +14,4 @@ export function AuthRoutes() {
 
   return router; // retorna as rotas
 }
+
