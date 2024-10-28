@@ -60,8 +60,8 @@ const Login: React.FC = () => {
     </div>
     </main>
     <footer>
-      <img className="auth_girl_2" src={auth_girl_1} alt="auth_girl_1"/>
-      <img className="auth_girl_1" src={auth_girl_2} alt="auth_girl_2"/>
+      <img className="auth_girl_1" src={auth_girl_1} alt="auth_girl_1"/>
+      <img className="auth_girl_2" src={auth_girl_2} alt="auth_girl_2"/>
     </footer>
 </div>
 }
