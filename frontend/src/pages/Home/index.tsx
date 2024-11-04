@@ -1,6 +1,7 @@
 // importa as dependências necessárias
 import React from 'react'; // importa o React
 import { useEffect, useState } from 'react'; // importa o useEffect e useState
+import NavBar from '../../components/NavBar/'; // importa o componente NavBar
 
 // define o componente Home
 const Home: React.FC = () => {
@@ -17,8 +18,7 @@ const Home: React.FC = () => {
 
   // retorna o JSX do componente 
   return <div>
-    <h1>Home</h1>
-    {!user ? <p>você não esta logado</p> : <p>Olá, {user.username}</p>}
+    <NavBar/>
   </div>
 }
 

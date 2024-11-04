@@ -13,13 +13,22 @@ const Profile: React.FC = () => {
   // cria um estado para armazenar o usuário
   const [user, setUser] = useState<any>(null);
 
+  // cria uma instância do hook useNavigate
+  const navigate = useNavigate(); 
+
+  
+
   // define o efeito colateral para buscar o usuário no localStorage
   useEffect(() => {
     const user = localStorage.getItem('user');
     if (user) {
       setUser(JSON.parse(user));
     }
-  }, []);
+    else {
+      // redireciona para a página de login
+      navigate('/login');
+    }
+  }, [navigate]);
 
   // retorna o JSX do componente
   return <div className="container">
