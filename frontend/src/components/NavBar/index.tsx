@@ -33,7 +33,7 @@ const NavBar: React.FC = () => {
       {user ? (
         <>
           <span>{user.username}</span>
-          <a href="/profile"><img src={user.profile_picture} alt="profile_picture"/></a>
+          <a href="/profile"><img src={user.profile_picture} alt="user_picture"/></a>
         </>
       ) : (
         <a href="/login">Login</a>
