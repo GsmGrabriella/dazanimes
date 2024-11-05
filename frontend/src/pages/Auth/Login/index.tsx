@@ -39,7 +39,7 @@ const Login: React.FC = () => {
   }
 
   // retorna o JSX do componente
-  return <div className="container">
+  return <div className="container_auth">
     <header>
       <img className="logo" src={logo} alt="logo"/>
     </header>
