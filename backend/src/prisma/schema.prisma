@@ -17,4 +17,35 @@ model User {
   admin           Boolean  @default(false) // se é admin
   created_at      DateTime @default(now()) // data de criação
   updated_at      DateTime @updatedAt // data de atualização
+  // relacionamento com os posts
+  posts           Post[] // posts do usuário
+  // relacionamento com os kawaiis
+  kawaiis         Kawaii[] // kawaiis do usuário
+}
+
+model Post {
+  id            String  @id @default(uuid()) // id do post ( uuid )
+  text          String? // conteudo do post
+  image         String? // imagem do post
+  type          String // tipo do post (text, image)
+  kawaiis_count Int     @default(0) // quantidade de likes
+
+  // relacionamento com o usuário
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String // id do usuário
+
+  // relacionamento com os kawaiis
+  kawaiis Kawaii[] // kawaiis do post
+}
+
+model Kawaii {
+  id String @id @default(uuid()) // id do kawaii ( uuid )
+
+  // relacionamento com o usuário
+  user    User   @relation(fields: [user_id], references: [id])
+  user_id String // id do usuário
+
+  // relacionamento com o post
+  post    Post   @relation(fields: [post_id], references: [id])
+  post_id String // id do post
 }

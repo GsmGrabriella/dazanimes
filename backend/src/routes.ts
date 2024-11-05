@@ -1,7 +1,8 @@
 // importação de dependências
 import { Router } from "express"; // dependência para cadastrar as rotas
-import { userRoutes } from "./routes/users"; // importação das rotas de usuários
+import { UserRoutes } from "./routes/users"; // importação das rotas de usuários
 import { AuthRoutes } from "./routes/auth"; // importação das rotas de autenticação
+import { PostRoutes } from "./routes/posts"; // importação das rotas de autenticação
 
 // criação das rotas
 const routes = Router();
@@ -12,7 +13,8 @@ routes.get('/', (req, res) => {
 })
 
 // utiliza as rotas
-routes.use('/users', userRoutes()); // utiliza as rotas de usuários
+routes.use('/users', UserRoutes()); // utiliza as rotas de usuários
 routes.use('/auth', AuthRoutes()); // utiliza as rotas de autenticação
+routes.use('/posts', PostRoutes()); // utiliza as rotas de autenticação
 
 export default routes; // exporta as rotas

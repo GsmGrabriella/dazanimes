@@ -4,7 +4,7 @@ import { createUser, updateUser } from '../controllers/UserController'; // impor
 import AuthMiddleware from '../middlewares/AuthMiddleware';
 
 // criação das rotas de usuários
-export function userRoutes() {
+export function UserRoutes() {
   const router = Router(); // instância do Router
 
   // rota raiz ( Olá Usuário )
