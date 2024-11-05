@@ -87,4 +87,64 @@ async function updateUser(req: Request, res: Response): Promise<Response> {
   return res.json(data);
 }
 
-export { createUser, updateUser }
+async function getRandomUsers(req: Request, res: Response): Promise<Response> {
+  const usersCount = await prisma.user.count();
+  const skip = Math.floor(Math.random() * usersCount);
+  const users = await prisma.user.findMany({
+    take: 5,
+    skip,
+    select: {
+      id: true,
+      username: true,
+      profile_picture: true
+    }
+  });
+
+  return res.json(users)
+}
+
+async function getUser(req: Request, res: Response): Promise<Response> {
+  const { id, username } = req.query
+  if (id && typeof id === 'string') {
+    const user = await prisma.user.findUnique({
+      where: {
+        id
+      },
+      select: {
+        id: true,
+        username: true,
+        profile_picture: true,
+      }
+    })
+
+    if (!user) {
+      return res.status(400).json({ error: 'User not found' })
+    }
+
+    return res.json(user)
+  }
+
+  if (username && typeof username === 'string') {
+    const users = await prisma.user.findMany({
+      where: {
+        username
+      },
+      select: {
+        id: true,
+        username: true,
+        profile_picture: true
+      }
+    })
+
+    if (users.length <= 0) {
+      return res.status(400).json({ error: 'User not found' })
+    }
+
+    return res.json(users)
+  }
+
+  return res.status(400).json({ error: 'User not found' })
+
+}
+
+export { createUser, updateUser, getRandomUsers, getUser }

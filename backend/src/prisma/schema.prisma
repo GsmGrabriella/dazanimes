@@ -30,6 +30,9 @@ model Post {
   type          String // tipo do post (text, image)
   kawaiis_count Int     @default(0) // quantidade de likes
 
+  created_at DateTime @default(now()) // data de criação
+  updated_at DateTime @updatedAt // data de atualização
+
   // relacionamento com o usuário
   user    User   @relation(fields: [user_id], references: [id])
   user_id String // id do usuário
