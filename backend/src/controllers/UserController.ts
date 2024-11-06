@@ -16,17 +16,12 @@ async function createUser(req: Request, res: Response): Promise<Response> {
   // encriptação da senha
   const passwordHash = await hashPassword(password)
 
-  // criação do usuário sem foto de perfil
-  if (!profilePicture) {
-    const data = await prisma.user.create({
-      data: {
-        username,
-        email,
-        password_hash: passwordHash
-      }
-    })
+  const existingUser = await prisma.user.findUnique({
+    where: { email }
+  });
 
-    return res.json(data)
+  if (existingUser) {
+    return res.status(400).json({ error: 'Email already in use' });
   }
 
   // criação do usuário com foto de perfil
@@ -35,7 +30,7 @@ async function createUser(req: Request, res: Response): Promise<Response> {
       username,
       email,
       password_hash: passwordHash,
-      profile_picture: profilePicture
+      ...(profilePicture && { profile_picture: profilePicture })
     }
   })
 
