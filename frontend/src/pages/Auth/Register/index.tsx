@@ -39,7 +39,7 @@ const Register: React.FC = () => {
     <header>
       <img className="logo" src={logo} alt="logo"/>
     </header>
-    <main>
+    <main className='main_auth'>
     <div className="register">
       <h2>Cadastro</h2>
       <form className="register_form" onSubmit={handleSubmit}>

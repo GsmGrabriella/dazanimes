@@ -43,7 +43,7 @@ const Login: React.FC = () => {
     <header>
       <img className="logo" src={logo} alt="logo"/>
     </header>
-    <main>
+    <main className='main_auth'>
     <div className="login">
       <h2>Login</h2>
       <form className="login_form" onSubmit={handleSubmit}>

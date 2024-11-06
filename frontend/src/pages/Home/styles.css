@@ -1,12 +1,38 @@
-#root .container {
-  background-color: white;
+#root {
+  width: 100%;
 }
 
+#root .container {
+  background-color: white;
+  padding: 0;
+  /* Remove qualquer padding que possa causar overflow */
+  margin: 0;
+  /* Remove margens indesejadas */
+  width: 100%;
+}
+
+.main_home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 1%;
+}
+
+.ad {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 
 .ad_img {
   width: 320px;
   height: 50px;
   object-fit: cover;
+}
+
+.profiles {
+  margin-top: 20px;
 }
 
 .search {
@@ -50,10 +76,12 @@
 
 .post_header {
   margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
 
 }
 
-.post_header .profile {
+.post_header .post_profile {
   margin-left: 10px;
   display: flex;
   align-items: center;
@@ -62,15 +90,34 @@
   color: black;
 }
 
-.profile span {
+.post_profile span {
   margin-left: 10px;
 }
 
-.profile_picture {
+.post_profile_picture {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   object-fit: cover;
+}
+
+.kawaiis {
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  justify-content: center;
+  text-align: center;
+}
+
+.kawaii_count {
+  text-align: center;
+  margin-right: 5px;
+  color: #FA87D2;
+}
+
+.kawaii_icon {
+  color: #FA87D2;
 }
 
 .post_content {
@@ -91,4 +138,113 @@
   margin-left: 10px;
   margin-right: 10px;
   margin-top: 5px;
+}
+
+.profile_callout {
+  display: none;
+}
+
+.profile {
+  display: none;
+}
+
+@media (min-width: 768px) {
+  .main_home {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .ad {
+    order: 3;
+    margin-right: 20px;
+    margin-left: 20px;
+    width: 120px;
+    border-left: 2px solid #A8A9B7;
+    padding-left: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    height: 700px;
+    margin-top: 20px;
+  }
+
+  .ad_img {
+    width: 120px;
+    height: 600px;
+    object-fit: cover;
+  }
+
+  .profiles {
+    margin-left: 20px;
+    height: 700px;
+    border-right: 2px solid #A8A9B7;
+    padding-right: 20px;
+    max-width: 160px;
+  }
+
+  .content {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .search input {
+    width: 120px;
+    height: 30px;
+    background-color: #A8A9B769;
+    border-radius: 20px;
+    text-decoration: none;
+    border: none;
+    font-size: 1em;
+    padding-left: 10px;
+
+  }
+
+  .search .search_button {
+    position: absolute;
+    left: 8rem;
+  }
+
+  .profile_callout {
+    display: inline;
+    font-family: "Inknut Antiqua" sans-serif;
+    font-size: 0.8rem;
+  }
+
+  .profile {
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    color: black;
+  }
+
+  .profile_link {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    margin-top: 10px;
+  }
+
+  .profile_link span {
+    margin-left: 10px;
+  }
+
+  .profile_picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .conhecer {
+    margin-left: 10px;
+    color: #FA87D2;
+  }
+
+  .post_container {
+    margin-left: -40px;
+  }
+
 }
