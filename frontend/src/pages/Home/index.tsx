@@ -6,6 +6,7 @@ import './styles.css'; // importa o arquivo de estilos
 import { IoSearchSharp } from "react-icons/io5";
 import { RiUserFollowLine, RiUserFollowFill } from "react-icons/ri";
 import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { MdDownloading } from "react-icons/md";
 import api from '../../util/api';
 
 // define o componente Home
@@ -35,20 +36,15 @@ const Home: React.FC = () => {
     
   }
 
-
-  async function handleScroll() {
-    if(window.innerHeight + document.documentElement.scrollTop + 1 >= document.documentElement.scrollHeight) {
-      setPage((prev: any) => prev + 1)
-      // if (hasNextPage === true) {
-        
-      // }
-    }
-    
-  }
-
   async function getPosts(nextPage: string) {
     const res = await api.get(`/posts/${nextPage}`)
-    
+    if (res.data.pages > 0) {
+      setHasNextPage(true)
+      setPage(page + 1)
+    } else {
+      setHasNextPage(false)
+    }
+
     setPosts((prev: any) => [...prev, ...res.data.posts])
   }
   
@@ -62,14 +58,10 @@ const Home: React.FC = () => {
       setUser(JSON.parse(user));
     }
     getRandomProfiles();
+    getPosts("0")
   }, []);
-  useEffect(() => {
-    window.addEventListener('scroll', handleScroll)
-  })
 
-  useEffect(() => {
-    getPosts(page.toString())
-  }, [page])
+  
 
   
 
@@ -106,6 +98,8 @@ const Home: React.FC = () => {
                     </div>
                   </div>
           },[])}
+
+          {hasNextPage ? <MdDownloading onClick={() => getPosts(page.toString())} className='load_more'/> : <span className='no_more_posts'>Não existem mais posts no momento!</span> }
           
         </div>
 

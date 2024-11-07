@@ -1,7 +1,7 @@
 // importa as dependências necessárias
 import React from 'react'; // importa o React
 import { useState, useEffect } from 'react' // importa o useState
-import { useNavigate } from "react-router-dom"; // importa o useNavigate
+import { useLocation } from "react-router-dom"; // importa o useNavigate
 import api from '../../util/api'; // importa a instância do axios
 import logo from '../../assets/logo.png'; // importa a logo
 
@@ -20,14 +20,20 @@ const NavBar: React.FC = () => {
     }
   }, []);
 
+  const location = useLocation();
+
+  const selectedStyle = {
+    color: '#C66AFF'
+  }
+
   // retorna o JSX do componente
   return <header className='header'>
     <div className='logo'><img src={logo} alt="logo"/></div>
     <div className='links'>
-      <a href="/">Início</a>
-      <a href="/">Notícias</a>
-      <a href="/">Destaques</a>
-      <a href={user ? "/profile" : "/login"}>Perfil</a>
+      <a href="/" style={location.pathname === "/" ? selectedStyle : {}} >Início</a>
+      <a href="/" style={location.pathname === "/noticias" ? selectedStyle : {}}>Notícias</a>
+      <a href="/" style={location.pathname === "/destaques" ? selectedStyle : {}}>Destaques</a>
+      <a href={user ? "/profile" : "/login" } style={location.pathname.startsWith("/profile") ? selectedStyle : {}}>Perfil</a>
     </div>
     <div className="user">
       {user ? (

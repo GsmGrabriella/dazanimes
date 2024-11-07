@@ -148,6 +148,18 @@
   display: none;
 }
 
+.load_more {
+  margin-top: 10px;
+  font-size: 2rem;
+  color: #FA87D2;
+  transition: 0.2s;
+}
+
+.load_more:hover {
+  cursor: pointer;
+  color: #fc19ac;
+}
+
 @media (min-width: 768px) {
   .main_home {
     flex-direction: row;
