@@ -21,6 +21,12 @@ model User {
   posts           Post[] // posts do usuário
   // relacionamento com os kawaiis
   kawaiis         Kawaii[] // kawaiis do usuário
+  // relacionamento com os follows
+  follows         Follow[] @relation("user") // conhecido pelo usuário
+  followeds       Follow[] @relation("followed") // conhecido o usuário
+
+  follows_count  Int @default(0) // quantidade de seguidores
+  followed_count Int @default(0) // quantidade de seguidos
 }
 
 model Post {
@@ -51,4 +57,16 @@ model Kawaii {
   // relacionamento com o post
   post    Post   @relation(fields: [post_id], references: [id])
   post_id String // id do post
+}
+
+model Follow {
+  id String @id @default(uuid()) // id do follow ( uuid )
+
+  // relacionamento com o usuário
+  user    User   @relation(fields: [user_id], references: [id], name: "user")
+  user_id String // id do usuário
+
+  // relacionamento com o usuário conhecido
+  followed    User   @relation(fields: [followed_id], references: [id], name: "followed")
+  followed_id String // id do usuário conhecido
 }

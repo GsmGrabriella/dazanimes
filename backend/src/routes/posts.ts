@@ -7,7 +7,7 @@ import { GetPosts } from '../controllers/PostController'; // importação das fu
 export function PostRoutes() {
   const router = Router(); // instância do Router
 
-  router.get('/:page?', GetPosts); // rota para buscar todos os posts
+  router.get('/', GetPosts); // rota para buscar todos os posts
 
   return router; // retorna as rotas
 }

@@ -98,7 +98,8 @@ async function getRandomUsers(req: Request, res: Response): Promise<Response> {
   return res.json(users)
 }
 
-async function getUser(req: Request, res: Response): Promise<Response> {
+async function getUsers(req: Request, res: Response): Promise<Response> {
+  const signedUser = typeof (req.headers.user) === 'string' ? JSON.parse(req.headers.user) : null
   const { id, username } = req.query
   if (id && typeof id === 'string') {
     const user = await prisma.user.findUnique({
@@ -109,6 +110,15 @@ async function getUser(req: Request, res: Response): Promise<Response> {
         id: true,
         username: true,
         profile_picture: true,
+        followeds: {
+          where: {
+            user_id: signedUser?.id || ''
+          },
+          select: {
+            id: true
+          },
+          take: 1
+        }
       }
     })
 
@@ -127,7 +137,18 @@ async function getUser(req: Request, res: Response): Promise<Response> {
       select: {
         id: true,
         username: true,
-        profile_picture: true
+        profile_picture: true,
+        followed_count: true,
+        follows_count: true,
+        followeds: {
+          where: {
+            user_id: signedUser?.id || ''
+          },
+          select: {
+            id: true
+          },
+          take: 1
+        }
       }
     })
 
@@ -142,4 +163,176 @@ async function getUser(req: Request, res: Response): Promise<Response> {
 
 }
 
-export { createUser, updateUser, getRandomUsers, getUser }
+async function followUser(req: Request, res: Response): Promise<Response> {
+  const { user } = req.headers
+  const { id } = req.params
+
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  if (typeof user !== 'string') {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  if (!id) {
+    return res.status(401).json({ error: 'ID not found' })
+  }
+
+  const parsedUser: UserDTO = JSON.parse(user)
+
+  if (id === parsedUser.id) {
+    return res.status(400).json({ error: 'You cannot follow yourself' })
+  }
+
+  const userExists = await prisma.user.findUnique({
+    where: {
+      id
+    },
+    select: {
+      id: true,
+      followed_count: true,
+      followeds: {
+        where: {
+          user_id: parsedUser.id
+        }
+      }
+    }
+  })
+
+  if (!userExists) {
+    return res.status(400).json({ error: 'User not found' })
+  }
+
+  if (userExists.followeds.length > 0) {
+    return res.status(400).json({ error: 'You are already following this user' })
+  }
+
+  const follow = await prisma.follow.create({
+    data: {
+      user_id: parsedUser.id,
+      followed_id: id
+    }
+  })
+
+  const updatedUser = await prisma.user.findUnique({
+    where: {
+      id: parsedUser.id
+    }
+  })
+
+  if (!updatedUser) {
+    return res.status(400).json({ error: 'User not found' })
+  }
+
+  await prisma.user.update({
+    where: {
+      id: parsedUser.id
+    },
+    data: {
+      follows_count: updatedUser.follows_count + 1
+    }
+  })
+
+  await prisma.user.update({
+    where: {
+      id: userExists.id
+    },
+    data: {
+      followed_count: userExists.followed_count + 1
+    }
+  })
+
+
+  return res.json(follow)
+
+}
+
+async function unfollowUser(req: Request, res: Response): Promise<Response> {
+  const { user } = req.headers
+  const { id } = req.params
+
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  if (typeof user !== 'string') {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  if (!id) {
+    return res.status(401).json({ error: 'ID not found' })
+  }
+
+  const parsedUser: UserDTO = JSON.parse(user)
+
+  if (id === parsedUser.id) {
+    return res.status(400).json({ error: 'You cannot unfollow yourself' })
+  }
+
+  const userExists = await prisma.user.findUnique({
+    where: {
+      id
+    },
+    select: {
+      id: true,
+      followed_count: true,
+      followeds: {
+        where: {
+          user_id: parsedUser.id
+        }
+      }
+    }
+  })
+
+  if (!userExists) {
+    return res.status(400).json({ error: 'User not found' })
+  }
+
+  if (userExists.followeds.length <= 0) {
+    return res.status(400).json({ error: 'You are already not following this user' })
+  }
+
+  console.log(userExists)
+
+  await prisma.follow.deleteMany({
+    where: {
+      user_id: parsedUser.id,
+      followed_id: id
+    }
+  })
+
+  const updatedUser = await prisma.user.findUnique({
+    where: {
+      id: parsedUser.id
+    }
+  })
+
+  if (!updatedUser) {
+    return res.status(400).json({ error: 'User not found' })
+  }
+
+  await prisma.user.update({
+    where: {
+      id: parsedUser.id
+    },
+    data: {
+      follows_count: updatedUser.follows_count - 1
+    }
+  })
+
+  await prisma.user.update({
+    where: {
+      id: userExists.id
+    },
+    data: {
+      followed_count: userExists.followed_count - 1
+    }
+  })
+
+
+  return res.status(204).json()
+
+}
+
+export { createUser, updateUser, getRandomUsers, getUsers, followUser, unfollowUser }

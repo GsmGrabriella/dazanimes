@@ -8,6 +8,8 @@ interface UserDTO {
   created_at: string
   updated_at: string
   admin: boolean
+  follows_count: number
+  followeds_count: number
 }
 
 // interface para tipar os dados de entrada da função createUser

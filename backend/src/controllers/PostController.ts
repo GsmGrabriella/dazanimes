@@ -5,7 +5,7 @@ import { Request, Response } from 'express' // dependências para tipar os parâ
 
 // função para criar um usuário
 async function GetPosts(req: Request, res: Response): Promise<Response> {
-  const page = parseInt(req.params.page || '0')
+  const page = req.query.page && typeof req.query.page === 'string' ? parseInt(req.query.page) : 0
 
   const posts = await prisma.post.findMany({
     skip: page * 5,
