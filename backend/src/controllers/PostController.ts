@@ -85,7 +85,6 @@ async function kawaiiPost(req: Request, res: Response): Promise<Response> {
     return res.status(400).json({ error: 'Post not found' })
   }
 
-  console.log(postExists)
 
   if (postExists.kawaiis.length > 0) {
     return res.status(400).json({ error: 'You are already kawaii this post' })

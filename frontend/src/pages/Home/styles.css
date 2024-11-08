@@ -160,6 +160,11 @@
   color: #fc19ac;
 }
 
+.no_more_posts {
+  margin-top: 10px;
+  color: #FA87D2;
+}
+
 @media (min-width: 768px) {
   .main_home {
     flex-direction: row;

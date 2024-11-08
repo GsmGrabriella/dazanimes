@@ -83,6 +83,7 @@ async function updateUser(req: Request, res: Response): Promise<Response> {
 }
 
 async function getRandomUsers(req: Request, res: Response): Promise<Response> {
+  const signedUser = typeof (req.headers.user) === 'string' ? JSON.parse(req.headers.user) : null
   const usersCount = await prisma.user.count();
   const skip = Math.floor(Math.random() * usersCount);
   const users = await prisma.user.findMany({
@@ -91,7 +92,17 @@ async function getRandomUsers(req: Request, res: Response): Promise<Response> {
     select: {
       id: true,
       username: true,
-      profile_picture: true
+      profile_picture: true,
+      followeds: {
+        where: {
+          user_id: signedUser?.id || ''
+        },
+        select: {
+          id: true
+        },
+        take: 1
+      }
+
     }
   });
 
@@ -293,7 +304,6 @@ async function unfollowUser(req: Request, res: Response): Promise<Response> {
     return res.status(400).json({ error: 'You are already not following this user' })
   }
 
-  console.log(userExists)
 
   await prisma.follow.deleteMany({
     where: {
