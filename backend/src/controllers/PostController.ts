@@ -1,8 +1,11 @@
 // importação de dependências
 import prisma from '../util/Prisma' // dependência para acessar o banco de dados
 import { Request, Response } from 'express' // dependências para tipar os parâmetros da função createUser
-// import {  } from '../interfaces/PostDTO'
 import { UserDTO } from '../interfaces/UserDTO'
+import { v4 as uuid } from 'uuid'
+import { imageKit } from '../util/ImageKit'
+import { CreatePostDTO } from '../interfaces/PostDTO'
+
 
 // função para criar um usuário
 async function GetPosts(req: Request, res: Response): Promise<Response> {
@@ -179,6 +182,102 @@ async function unkawaiiPost(req: Request, res: Response): Promise<Response> {
 
 }
 
+async function createPost(req: Request, res: Response): Promise<Response> {
+  const { user } = req.headers
+  const { text, type } = req.body
+  const file = req.file
+
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  if (typeof user !== 'string') {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  if (!text && !file) {
+    return res.status(400).json({ error: 'Text or file is required' })
+  }
+
+  if (!type) {
+    return res.status(400).json({ error: 'Type is required' })
+  }
+
+  const parsedUser: UserDTO = JSON.parse(user)
+
+  let url
+  if (file) {
+    if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.mimetype)) {
+      return res.status(400).json({ error: 'Invalid file type' })
+    }
+
+    let imageName = uuid()
+    imageName += `-${parsedUser.username}.${file.mimetype.split('/')[1]}`
+
+    const image = await imageKit.upload({
+      file: file.buffer,
+      fileName: imageName
+    })
+
+    url = image.url
+
+  }
+
+  const postData: CreatePostDTO = {
+    user_id: parsedUser.id,
+    text,
+    image: url,
+    type
+  }
+
+  const post = await prisma.post.create({
+    data: postData
+  })
 
 
-export { GetPosts, kawaiiPost, unkawaiiPost }
+  return res.json(post)
+}
+
+async function deletePost(req: Request, res: Response): Promise<Response> {
+  const { user } = req.headers
+  const { id } = req.params
+
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  if (typeof user !== 'string') {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  if (!id) {
+    return res.status(401).json({ error: 'ID not found' })
+  }
+
+  const parsedUser: UserDTO = JSON.parse(user)
+
+  if (parsedUser.admin !== true) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+
+  const postExists = await prisma.post.findUnique({
+    where: {
+      id
+    }
+  })
+
+  if (!postExists) {
+    return res.status(400).json({ error: 'Post not found' })
+  }
+
+  await prisma.post.delete({
+    where: {
+      id
+    }
+  })
+
+  return res.status(204).json()
+}
+
+
+export { GetPosts, kawaiiPost, unkawaiiPost, createPost, deletePost }
