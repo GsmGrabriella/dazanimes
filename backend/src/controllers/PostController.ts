@@ -8,12 +8,16 @@ import { UserDTO } from '../interfaces/UserDTO'
 async function GetPosts(req: Request, res: Response): Promise<Response> {
   const signedUser = typeof (req.headers.user) === 'string' ? JSON.parse(req.headers.user) : null
   const page = req.query.page && typeof req.query.page === 'string' ? parseInt(req.query.page) : 0
-
+  const type = req.query.type && typeof req.query.type === 'string' ? req.query.type : "post"
+  const mostLiked = req.query.mostLiked && req.query.mostLiked === 'desc' ? req.query.mostLiked : undefined
 
 
   const posts = await prisma.post.findMany({
     skip: page * 5,
     take: 5,
+    where: {
+      type
+    },
     include: {
       user: {
         select: {
@@ -30,9 +34,7 @@ async function GetPosts(req: Request, res: Response): Promise<Response> {
         }
       }
     },
-    orderBy: {
-      created_at: 'desc'
-    }
+    orderBy: mostLiked ? { kawaiis_count: 'desc' } : { created_at: 'desc' }
   })
 
   // contar a quantidade de paginas restantes
