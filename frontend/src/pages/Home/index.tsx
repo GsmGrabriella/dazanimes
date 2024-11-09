@@ -22,6 +22,7 @@ const Home: React.FC = () => {
   const [posts, setPosts] = useState<any>([]);
   const [page, setPage] = useState<any>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+  const [searched, setSearched] = useState<boolean>(false);
   const width = window.innerWidth;
   const navigate = useNavigate();
 
@@ -43,12 +44,13 @@ const Home: React.FC = () => {
 
   async function getProfiles() {
     try {
-      if (width > 768) {
-        const res = await api.get(`/users/?username=${profileSearch}`)
-        setProfiles(res.data)
+      const res = await api.get(`/users/?username=${profileSearch}`)
+      if (user) {
+        setProfiles(res.data.filter((profile: any) => profile.id !== user.id));
       } else {
-        navigate(`/profiles/?name=${profileSearch}`)
+        setProfiles(res.data);
       }
+      setSearched(true)
       
     }
     catch(e) {
@@ -139,6 +141,9 @@ const Home: React.FC = () => {
     if (user !== null) {
       getRandomProfiles();
       getPosts();
+      if (width < 768) {
+        setSearched(false)
+      }
     }
   }, [user]);
   
@@ -154,7 +159,7 @@ const Home: React.FC = () => {
             <IoSearchSharp className='search_button' onClick={getProfiles}/>
           </div>
           <h3 className="profile_callout">Perfis para conhecer</h3>
-          {loadingProfiles === false && profiles.map((profile: any) => {
+          {searched && loadingProfiles === false && profiles.map((profile: any) => {
             return <div className="profile" key={profile.id}>
                     <div className="profile_link"><img src={profile.profile_picture} alt="" className="profile_picture" /> <span>{profile.username}</span>
                     {profile.followeds && profile.followeds.length > 0 ? (

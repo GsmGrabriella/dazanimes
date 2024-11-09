@@ -12,10 +12,10 @@ const App: React.FC = () => (
 	<UserProvider>
 		<BrowserRouter>
 			<Routes>
-				<Route path="/" element={<Home />}  />
+				<Route path="/" element={<Home />} />
 				<Route path="/login" element={<Login />} />
 				<Route path="/Register" element={<Register />} />
-				<Route path="/Profile" element={<Profile />} />
+				<Route path="/Profile/:id" element={<Profile />} />
 			</Routes>
 		</BrowserRouter>
 	</UserProvider>

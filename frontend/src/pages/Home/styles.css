@@ -144,9 +144,7 @@
   display: none;
 }
 
-.profile {
-  display: none;
-}
+
 
 .load_more {
   margin-top: 10px;
@@ -163,6 +161,41 @@
 .no_more_posts {
   margin-top: 10px;
   color: #FA87D2;
+}
+
+@media(max-width: 767px) {
+  .profile {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: black;
+  }
+
+  .profile_link {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    margin-top: 10px;
+  }
+
+  .profile_link span {
+    margin-left: 10px;
+  }
+
+  .profile_picture {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .conhecer {
+    margin-left: 10px;
+    color: #FA87D2;
+  }
 }
 
 @media (min-width: 768px) {

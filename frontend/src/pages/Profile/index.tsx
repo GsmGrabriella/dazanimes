@@ -1,39 +1,149 @@
 // importa as dependências necessárias
-import React from 'react'; // importa o React
-import { useState, useEffect } from 'react' // importa o useState
-import { useNavigate } from "react-router-dom"; // importa o useNavigate
-import api from '../../util/api'; // importa a instância do axios
-
+import React, { useCallback, useContext } from 'react'; // importa o React
+import { useEffect, useState } from 'react'; // importa o useEffect e useState
 import NavBar from '../../components/NavBar/'; // importa o componente NavBar
-
 import './styles.css'; // importa o arquivo de estilos
+import { UserContext } from '../../contexts/UserContext'; // importa o contexto UserContext
+import { LuImagePlus } from "react-icons/lu";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
+import { GrDocumentUpdate } from "react-icons/gr";
+import { MdDownloading } from "react-icons/md";
+import { GiExitDoor } from "react-icons/gi";
+import api from '../../util/api';
+import { useNavigate, useParams } from "react-router-dom"; // importa o useNavigate
 
 // define o componente Profile
 const Profile: React.FC = () => {
-  // cria um estado para armazenar o usuário
-  const [user, setUser] = useState<any>(null);
+  const {id} = useParams();
+  const userContext = useContext(UserContext);
+  const user = userContext?.user;
+  const [profile, setProfile] = useState<any>();
+  const [posts, setPosts] = useState<any>([]);
+  const [page, setPage] = useState<any>(0);
+  const [hasNextPage, setHasNextPage] = useState<boolean>(false);
+  const width = window.innerWidth;
+  const [selectedWindow, setSelectedWindow] = useState<string>('posts');
+  const navigate = useNavigate();
 
-  // cria uma instância do hook useNavigate
-  const navigate = useNavigate(); 
+  async function getProfile() {
+    try {
+      const res = await api.get(`/users/?id=${id}`)
+      setProfile(res.data)
+      
+    }
+    catch(e) {
+      console.log(e)
+    }
+    
+  }
 
+  const getPosts = useCallback(async (nextPage?: string) => {
+    if (!nextPage) {
+      nextPage = '0'
+    }
+    const res = await api.get(`/posts/?page=${nextPage}`)
+    if (res.data.pages > 0) {
+      setHasNextPage(true)
+      setPage(page + 1)
+    } else {
+      setHasNextPage(false)
+    }
+
+    setPosts((prev: any) => [...prev, ...res.data.posts])
+  }, [page])
+
+  async function handleKawaii(postId: string) {
+    try {
+      // Encontre o post específico
+      const post = posts.find((post: any) => post.id === postId);
   
+      // Verifique se o post existe e se o tamanho de kawaiis é maior que 0
+      if (post.kawaiis.length <= 0) {
+        await api.post(`/posts/kawaii/${postId}`);
+        setPosts((prev: any) => prev.map((post: any) => {
+          if (post.id === postId) {
+            post.kawaiis_count += 1;
+            post.kawaiis = [{}]
+          }
+          return post;
+        }));
+      } else {
+        await api.delete(`/posts/unkawaii/${postId}`);
+        setPosts((prev: any) => prev.map((post: any) => {
+          if (post.id === postId) {
+            post.kawaiis_count -= 1;
+            post.kawaiis = []
+          }
+          return post;
+        }));
+      }
+    } catch(e) {
+      
+      
+    }
+  }
 
   // define o efeito colateral para buscar o usuário no localStorage
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (user) {
-      setUser(JSON.parse(user));
+    if (user !== null) {
+      getPosts();
+      getProfile();
     }
-    else {
-      // redireciona para a página de login
-      navigate('/login');
-    }
-  }, [navigate]);
+  }, [user]);
+  
 
-  // retorna o JSX do componente
-  return <div className="container">
+  // retorna o JSX do componente 
+  return <div className='profile_container'>
     <NavBar/>
-</div>
+    <main className='profile_main_home'>
+      <div className="profile_profile_container">
+        <div className="profile_profile_head1">
+          <img src={user?.profile_picture} alt="" className="profile_profile_image" />
+          <h1>{user?.username}</h1>
+          <GiExitDoor className='profile_profile_logout_icon' />   
+        </div>
+
+        <div className="profile_profile_head2">
+        <label htmlFor="profile_image_input" className='profile_image_input_label'>
+              Trocar Foto <LuImagePlus className='profile_icon_input'/>
+            </label>
+          <input type="file" accept='image/*' name="image" id="profile_image_input"/>
+          <span>{user?.follows_count} Conhecendo</span>
+          <span>{user?.followed_count} Conhecidos</span>
+          <GrDocumentUpdate className='profile_new_post'  />
+        </div>
+
+        <div className='profile_bar'></div>
+        
+
+      </div>
+        <div className='profile_post_container'>
+          {posts.map((post:any) => {
+            return <div className="profile_post" key={post.id}>
+                    <div className="profile_post_header">
+                      <a href="." className="profile_post_profile"><img src={post.user.profile_picture} alt="" className="profile_post_profile_picture" /> <span>{post.user.username}</span></a>
+                      <div className="profile_kawaiis"><span className="profile_kawaii_count">{post.kawaiis_count.toString()}</span>
+                      {post.kawaiis.length > 0 ? (
+  <FaHeart onClick={() => handleKawaii(post.id)} className='profile_kawaii_icon' />
+) : (
+  <FaRegHeart onClick={() => handleKawaii(post.id)} className='profile_kawaii_icon' />
+)}
+                      </div>
+                    </div>
+                    <div className="profile_post_content">
+                    <img src={post.image} alt="" className="profile_post_image" />
+                    <p>{post.text}</p>
+                    </div>
+                  </div>
+          },[])}
+
+          {hasNextPage ? <MdDownloading onClick={() => getPosts(page.toString())} className='profile_load_more'/> : <span className='profile_no_more_posts'>Não existem mais posts no momento!</span> }
+          
+        </div>
+
+    </main>
+    
+  </div>
 }
 
 export default Profile;
