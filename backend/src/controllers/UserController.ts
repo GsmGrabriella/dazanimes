@@ -3,6 +3,8 @@ import prisma from '../util/Prisma' // dependência para acessar o banco de dado
 import { hashPassword } from '../util/Password' // importação da função hashPassword
 import { Request, Response } from 'express' // dependências para tipar os parâmetros da função createUser
 import { UserDTO, CreateUserDTO, UpdateUserDTO } from '../interfaces/UserDTO'
+import { v4 as uuid } from 'uuid'
+import { imageKit } from '../util/ImageKit'
 
 // função para criar um usuário
 async function createUser(req: Request, res: Response): Promise<Response> {
@@ -46,7 +48,7 @@ async function updateUser(req: Request, res: Response): Promise<Response> {
 
   const { user } = req.headers
   const { id } = req.params
-  const { username, email, password, passwordConfirmation, profilePicture }: UpdateUserDTO = req.body
+  const file = req.file
 
   if (typeof user !== 'string') {
     return res.status(401).json({ error: 'Unauthorized' })
@@ -58,13 +60,21 @@ async function updateUser(req: Request, res: Response): Promise<Response> {
     return res.status(401).json({ error: 'Unauthorized' })
   }
 
-  if (password && password !== passwordConfirmation) {
-    return res.status(400).json({ error: 'Password and password confirmation do not match' })
+  if (!file) {
+    return res.status(400).json({ error: 'Profile picture not found' })
   }
-  let passwordHash = null
-  if (password) {
-    passwordHash = await hashPassword(password)
+
+  if (!['image/jpeg', 'image/png', 'image/gif'].includes(file.mimetype)) {
+    return res.status(400).json({ error: 'Invalid file type' })
   }
+
+  let imageName = uuid()
+  imageName += `-${authorizedUser.username}.${file.mimetype.split('/')[1]}`
+
+  const image = await imageKit.upload({
+    file: file.buffer,
+    fileName: imageName
+  })
 
 
   const data = await prisma.user.update({
@@ -72,10 +82,7 @@ async function updateUser(req: Request, res: Response): Promise<Response> {
       id
     },
     data: {
-      username: username || authorizedUser.username,
-      email: email || authorizedUser.email,
-      password_hash: passwordHash || authorizedUser.password_hash,
-      profile_picture: profilePicture || authorizedUser.profilePicture
+      profile_picture: image.url
     }
   })
 
