@@ -128,6 +128,8 @@ async function getUsers(req: Request, res: Response): Promise<Response> {
         id: true,
         username: true,
         profile_picture: true,
+        followed_count: true,
+        follows_count: true,
         followeds: {
           where: {
             user_id: signedUser?.id || ''
