@@ -11,6 +11,7 @@ import { MdDownloading } from "react-icons/md";
 import { GiExitDoor } from "react-icons/gi";
 import api from '../../util/api';
 import { useNavigate, useParams } from "react-router-dom"; // importa o useNavigate
+import { FaRegTrashAlt } from "react-icons/fa";
 
 // define o componente Profile
 const Profile: React.FC = () => {
@@ -103,6 +104,20 @@ const Profile: React.FC = () => {
     navigate('/login');
   }
 
+  async function handleDeletePost(e:any, postId: string) {
+    e.preventDefault();
+    // eslint-disable-next-line no-restricted-globals
+    if (confirm('Você tem certeza que deseja deletar este post?')) {
+      try {
+        await api.delete(`/posts/${postId}`);
+        setPosts((prev: any) => prev.filter((post: any) => post.id !== postId));
+        window.location.reload();
+
+      } catch (e) {
+        console.log(e);
+      }
+  }}
+
   // define o efeito colateral para buscar o usuário no localStorage
   useEffect(() => {
     if (user !== null) {
@@ -149,6 +164,7 @@ const Profile: React.FC = () => {
 ) : (
   <FaRegHeart onClick={() => handleKawaii(post.id)} className='profile_kawaii_icon' />
 )}
+{user?.admin && <FaRegTrashAlt className='delete_post_icon' onClick={e => handleDeletePost(e, post.id)}/>}
                       </div>
                     </div>
                     <div className="profile_post_content">

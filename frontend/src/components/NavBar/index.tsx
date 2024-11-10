@@ -25,8 +25,8 @@ const NavBar: React.FC = () => {
     <div className='logo'><img src={logo} alt="logo"/></div>
     <div className='links'>
       <a href="/" style={location.pathname === "/" ? selectedStyle : {}} >Início</a>
-      <a href="/" style={location.pathname === "/noticias" ? selectedStyle : {}}>Notícias</a>
-      <a href="/" style={location.pathname === "/destaques" ? selectedStyle : {}}>Destaques</a>
+      <a href="/noticias" style={location.pathname === "/noticias" ? selectedStyle : {}}>Notícias</a>
+      <a href="/destaques" style={location.pathname === "/destaques" ? selectedStyle : {}}>Destaques</a>
       <a href={user ? `/profile/${user.id}` : "/login" } style={location.pathname.startsWith("/profile") ? selectedStyle : {}}>Perfil</a>
     </div>
     <div className="user">

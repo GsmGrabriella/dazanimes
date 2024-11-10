@@ -13,7 +13,7 @@ import { useNavigate } from "react-router-dom"; // importa o useNavigate
 import { FaRegTrashAlt } from "react-icons/fa";
 
 // define o componente Home
-const Home: React.FC = () => {
+const Destaques: React.FC = () => {
   // cria um estado para armazenar o usuário
   const userContext = useContext(UserContext);
   const user = userContext?.user;
@@ -64,7 +64,7 @@ const Home: React.FC = () => {
     if (!nextPage) {
       nextPage = '0'
     }
-    const res = await api.get(`/posts/?page=${nextPage}`)
+    const res = await api.get(`/posts/?page=${nextPage}&mostLiked=desc`)
     if (res.data.pages > 0) {
       setHasNextPage(true)
       setPage(page + 1)
@@ -167,11 +167,11 @@ const Home: React.FC = () => {
   return <div className='container'>
     <NavBar/>
     <main className='main_home'>
-      <a href="." className="ad">{width < 768 ? <img src="https://i.pinimg.com/736x/33/5c/72/335c72a5dffe89ee98f34bde6eb4fb6d.jpg" alt="" className='ad_img' /> : <img src="https://i.pinimg.com/736x/41/df/32/41df3272328565d8134b15261429c62c.jpg" alt="" className='ad_img' />}</a>
-        <div className="profiles">
+      <a href="." className="destaques_ad">{width < 768 ? <img src="https://i.pinimg.com/736x/33/5c/72/335c72a5dffe89ee98f34bde6eb4fb6d.jpg" alt="" className='ad_img' /> : <img src="https://i.pinimg.com/736x/41/df/32/41df3272328565d8134b15261429c62c.jpg" alt="" className='ad_img' />}</a>
+        <div className="destaques_profiles">
           <div className="search">
             <input type="text" placeholder="Pesquisar" value={profileSearch} onChange={e=>setProfileSearch(e.target.value)}/>
-            <IoSearchSharp className='search_button' onClick={getProfiles}/>
+            <IoSearchSharp className='destaques_search_button' onClick={getProfiles}/>
           </div>
           <h3 className="profile_callout">Perfis para conhecer</h3>
           {searched && loadingProfiles === false && profiles.map((profile: any) => {
@@ -186,7 +186,7 @@ const Home: React.FC = () => {
                   </div>
           }, [])}
         </div>
-        <div className='post_container'>
+        <div className='destaques_post_container'>
           {posts.map((post:any) => {
             return <div className="post" key={post.id}>
                     <div className="post_header">
@@ -216,4 +216,4 @@ const Home: React.FC = () => {
   </div>
 }
 
-export default Home;
+export default Destaques;
