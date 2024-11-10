@@ -21,8 +21,6 @@ const Profile: React.FC = () => {
   const [posts, setPosts] = useState<any>([]);
   const [page, setPage] = useState<any>(0);
   const [hasNextPage, setHasNextPage] = useState<boolean>(false);
-  const width = window.innerWidth;
-  const [selectedWindow, setSelectedWindow] = useState<string>('posts');
   const navigate = useNavigate();
 
   async function getProfile() {
@@ -41,7 +39,7 @@ const Profile: React.FC = () => {
     if (!nextPage) {
       nextPage = '0'
     }
-    const res = await api.get(`/posts/?page=${nextPage}`)
+    const res = await api.get(`/posts/?page=${nextPage}&fromUser=${id}`)
     if (res.data.pages > 0) {
       setHasNextPage(true)
       setPage(page + 1)
@@ -50,7 +48,7 @@ const Profile: React.FC = () => {
     }
 
     setPosts((prev: any) => [...prev, ...res.data.posts])
-  }, [page])
+  }, [page, id]);
 
   async function handleKawaii(postId: string) {
     try {
@@ -83,6 +81,28 @@ const Profile: React.FC = () => {
     }
   }
 
+  async function handleUpdateProfilePic(e:any) {
+    e.preventDefault();
+    console.log(e.target.files[0])
+    const formData = new FormData();
+    formData.append('profileImage', e.target.files[0]);
+    try {
+      const res = await api.put(`/users/update/${user?.id}`, formData, {headers: {'Content-Type': 'multipart/form-data'}})
+      setProfile(res.data)
+      localStorage.setItem('user', JSON.stringify(res.data));
+      window.location.reload();
+      
+    }
+    catch(e) {
+      console.log(e)
+  }}
+
+  function handleLogout() {
+    localStorage.removeItem('user');
+    localStorage.removeItem('token');
+    navigate('/login');
+  }
+
   // define o efeito colateral para buscar o usuário no localStorage
   useEffect(() => {
     if (user !== null) {
@@ -97,26 +117,27 @@ const Profile: React.FC = () => {
     <NavBar/>
     <main className='profile_main_home'>
       <div className="profile_profile_container">
-        <div className="profile_profile_head1">
-          <img src={user?.profile_picture} alt="" className="profile_profile_image" />
-          <h1>{user?.username}</h1>
-          <GiExitDoor className='profile_profile_logout_icon' />   
+        <div className="profile_profile_image_container">
+          <img src={profile?.profile_picture} alt="" className="profile_profile_image" />
+          <label htmlFor="profile_image_input">
+            <input type="file" accept='image/*' name="profile_image_input" id="profile_image_input" onChange={handleUpdateProfilePic} />
+            {profile?.id === user?.id && <><span>Trocar Foto</span> <LuImagePlus className='profile_image_icon'/></>}
+          </label>
         </div>
-
-        <div className="profile_profile_head2">
-        <label htmlFor="profile_image_input" className='profile_image_input_label'>
-              Trocar Foto <LuImagePlus className='profile_icon_input'/>
-            </label>
-          <input type="file" accept='image/*' name="image" id="profile_image_input"/>
-          <span>{user?.follows_count} Conhecendo</span>
-          <span>{user?.followed_count} Conhecidos</span>
-          <GrDocumentUpdate className='profile_new_post'  />
+        <div className="profile_profile_content_container">
+          <div className="profile_profile_name">
+            <h1>{profile?.username}</h1>
+            {profile?.id === user?.id && <GiExitDoor onClick={handleLogout}/>}
+          </div>
+          
+          <div className="profile_profile_info_container">
+            <span>{profile?.followed_count} Conhecidos</span>
+            <span>{profile?.follows_count} Conhecendo</span>
+          </div>
+          {profile?.id === user?.id && <GrDocumentUpdate className='profile_profile_new_post' onClick={() => navigate("/newpost")}/>}
         </div>
-
-        <div className='profile_bar'></div>
-        
-
       </div>
+      <div className='profile_bar'></div>
         <div className='profile_post_container'>
           {posts.map((post:any) => {
             return <div className="profile_post" key={post.id}>

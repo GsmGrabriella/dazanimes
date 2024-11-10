@@ -12,8 +12,43 @@ async function GetPosts(req: Request, res: Response): Promise<Response> {
   const signedUser = typeof (req.headers.user) === 'string' ? JSON.parse(req.headers.user) : null
   const page = req.query.page && typeof req.query.page === 'string' ? parseInt(req.query.page) : 0
   const type = req.query.type && typeof req.query.type === 'string' ? req.query.type : "post"
+  const fromUser = req.query.fromUser && typeof req.query.fromUser === 'string' ? req.query.fromUser : undefined
   const mostLiked = req.query.mostLiked && req.query.mostLiked === 'desc' ? req.query.mostLiked : undefined
 
+  if (fromUser) {
+    const posts = await prisma.post.findMany({
+      skip: page * 5,
+      take: 5,
+      where: {
+        user_id: fromUser
+      },
+      include: {
+        user: {
+          select: {
+            username: true,
+            profile_picture: true
+          }
+        },
+        kawaiis: {
+          where: {
+            user_id: signedUser ? signedUser.id : ""
+          },
+          select: {
+            user_id: true
+          }
+        }
+      },
+      orderBy: mostLiked ? { kawaiis_count: 'desc' } : { created_at: 'desc' }
+    })
+
+    // contar a quantidade de paginas restantes
+    const count = await prisma.post.count()
+    const pages = Math.ceil(count / 5)
+
+    // retornar os posts
+
+    return res.json({ posts, pages: (pages - page - 1) });
+  }
 
   const posts = await prisma.post.findMany({
     skip: page * 5,
