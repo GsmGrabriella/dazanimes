@@ -190,7 +190,7 @@ const Home: React.FC = () => {
           {posts.map((post:any) => {
             return <div className="post" key={post.id}>
                     <div className="post_header">
-                      <a href="." className="post_profile"><img src={post.user.profile_picture} alt="" className="post_profile_picture" /> <span>{post.user.username}</span></a>
+                      <a href={`/profile/${post.user.id}`} className="post_profile"><img src={post.user.profile_picture} alt="" className="post_profile_picture" /> <span>{post.user.username}</span></a>
                       <div className="kawaiis"><span className="kawaii_count">{post.kawaiis_count.toString()}</span>
                       {post.kawaiis.length > 0 ? (
   <FaHeart onClick={() => handleKawaii(post.id)} className='kawaii_icon' />
