@@ -25,6 +25,7 @@ async function GetPosts(req: Request, res: Response): Promise<Response> {
       include: {
         user: {
           select: {
+            id:true,
             username: true,
             profile_picture: true
           }
@@ -59,6 +60,7 @@ async function GetPosts(req: Request, res: Response): Promise<Response> {
     include: {
       user: {
         select: {
+          id:true,
           username: true,
           profile_picture: true
         }
